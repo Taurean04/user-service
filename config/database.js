@@ -1,8 +1,8 @@
-const config = require('./config').production;
+const config = require('./config').development;
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize(config.database, config.username, config.password, {
     host: config.host,
-    dialect: 'postgres',
+    dialect: 'mysql',
     raw: true,
     port: config.port,
     seederStorage: process.env.SEEDER_STORAGE,
@@ -12,12 +12,6 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
         acquire: 30000,
         idle: 10000
     },
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false // <<<<<<< YOU NEED THIS
-        }
-    }
 });
 
 sequelize.authenticate()
