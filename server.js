@@ -23,6 +23,6 @@ app.get('/', (req,res) => {
 app.use('/user-service/v1', router);
 
 app.listen(config.appPort, () => {
-    console.log(`Listening on port: ${process.env.PORT}`);
+    console.log(`Listening on port: ${process.env.APP_PORT}`);
 });
 module.exports = app;
