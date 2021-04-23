@@ -46,9 +46,9 @@ exports.getUserById = async (req, res) => {
     try {
         let data = await User.findByPk(id, {transaction: t});
         if(data){
-            await t.commit();
             res.status(200).json({user: data});
         }
+        await t.commit();
         res.status(404).send({message: "User with the specified ID does not exists"});
     } catch (e) {
         await t.rollback();
