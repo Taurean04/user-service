@@ -1,5 +1,5 @@
 const sequelize = require('./config/database')
-const config = require('./config/app');
+const config = require('./config/config').production;
 const express = require('express');
 const app = express();
 const router = require('./routers/routes');
