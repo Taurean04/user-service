@@ -12,8 +12,8 @@ exports.createUser = async (req, res) => {
     // Save User in the database
     try {
         let data = await User.create({...payload}, {transaction: t});
-        await t.commit();
         res.status(200).json({message: 'User created successfully', data});
+        await t.commit();
     } catch (e) {
         await t.rollback();
         console.log(e);
@@ -28,8 +28,8 @@ exports.getAllUsers = async (req, res) => {
     const t = await sequelize.transaction ();
     try {
         let data = await User.findAll({transaction: t});
+        return res.status(200).json({users: data});
         await t.commit();
-        res.status(200).json({users: data});
     } catch (e) {
         await t.rollback();
         console.log(e);
@@ -46,10 +46,10 @@ exports.getUserById = async (req, res) => {
     try {
         let data = await User.findByPk(id, {transaction: t});
         if(data){
-            res.status(200).json({user: data});
+           return res.status(200).json({user: data});
         }
+        return res.status(404).send({message: "User with the specified ID does not exists"});
         await t.commit();
-        res.status(404).send({message: "User with the specified ID does not exists"});
     } catch (e) {
         await t.rollback();
         console.log(e);
@@ -65,10 +65,14 @@ exports.updateUser = async (req, res) => {
     const t = await sequelize.transaction ();
 
     try {
+        let user = await User.findOne({ where: {id}}, {transaction: t});
+        if(!user){
+            return res.status(404).send({message: "User with the specified ID does not exists"});
+        }
         let data = await User.update(payload, {where: {id}}, {transaction: t});
         let updated = await User.findOne({ where: {id}}, {transaction: t});
+        return res.status(200).json({ userInfo: updated,  message: "User was updated successfully."});
         await t.commit();
-        res.status(200).json({ userInfo: updated,  message: "User was updated successfully."});
     } catch (e) {
         await t.rollback();
         console.log(e);
@@ -85,10 +89,10 @@ exports.deleteUser = async (req, res) => {
     try {
         let data = await User.destroy({where: {id}}, {transaction: t});
         if(data){
-            await t.commit();
-            res.status(200).send({message: "User was deleted successfully!"});
+            return res.status(200).send({message: "User was deleted successfully!"});
         }
-        res.status(404).send({ message: "User with the specified ID does not exists"});
+        return res.status(404).send({ message: "User with the specified ID does not exists"});
+        await t.commit();
     } catch (e) {
         await t.rollback();
         console.log(e);
